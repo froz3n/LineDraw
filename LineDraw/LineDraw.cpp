@@ -45,6 +45,11 @@ void main(int argc, char **argv)
 	if (mode == 3) {
 		cout << "\nMasukkan r : ";
 		cin >> r;
+		if (r<1) {
+			cout << "error" << endl;
+			cout << "\nMasukkan r : ";
+			cin >> r;
+		}
 	}
 	else {
 		cout << "\nMasukkan x2 : ";
