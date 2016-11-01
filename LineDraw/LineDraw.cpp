@@ -2,7 +2,6 @@
 //
 
 #include "stdafx.h"
-//Algoritma Bresenham
 
 #include <GL\freeglut.h>
 #include <GL\glut.h>
@@ -10,6 +9,7 @@
 
 
 using namespace std;
+//variabel global
 int mode = 0;
 int x1 = 0, y_1 = 0, x2 = 0, y2 = 0, r = 0;
 //identifier fungsi
