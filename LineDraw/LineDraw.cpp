@@ -11,9 +11,10 @@
 
 using namespace std;
 int mode = 0;
+int x1 = 0, y_1 = 0, x2 = 0, y2 = 0, r = 0;
 //identifier fungsi
 void function();
-void DD();
+void DDA();
 void Bresenham();
 void Circle();
 
@@ -35,8 +36,22 @@ char *judul_window = "Garis";
 
 void main(int argc, char **argv)
 {
-	cout << "Mode : ";
+	cout << "1.DDA\n2.Bresenham\n3.Lingkaran\nMode : ";
 	cin >> mode;
+	cout << "\nMasukkan x1 : ";
+	cin >> x1;
+	cout << "\nMasukkan y_1 : ";
+	cin >> y_1;
+	if (mode == 3) {
+		cout << "\nMasukkan r : ";
+		cin >> r;
+	}
+	else {
+		cout << "\nMasukkan x2 : ";
+		cin >> x2;
+		cout << "\nMasukkan y2 : ";
+		cin >> y2;
+	}
 	//  inisialisasi GLUT (OpenGL Utility Toolkit)
 	glutInit(&argc, argv);
 	// set posisi window supaya berada di tengah 
@@ -54,10 +69,11 @@ void main(int argc, char **argv)
 	glutMainLoop(); // set loop pemrosesan GLUT
 }
 
-void function() {
+//fungsi pemilihan algoritma
+void function() { 
 	switch (mode)
 	{
-	case 1:		DD();
+	case 1:		DDA();
 		break;
 	case 2:		Bresenham();
 		break;
@@ -74,7 +90,7 @@ void init()
 	glPointSize(2.0); //set ukuran titik
 	glMatrixMode(GL_PROJECTION); //set mode matriks yang digunakan 
 	glLoadIdentity(); // load matriks identitas
-	gluOrtho2D(0.0, 800.0, 0.0, 600.0); // set ukuran viewing window
+	gluOrtho2D(0.0, 960.0, 0.0, 720.0); // set ukuran viewing window
 }
 void display()
 {
@@ -83,19 +99,16 @@ void display()
 	glutSwapBuffers(); //swap buffer 
 }
 
-void DD() {
-	int x1, x2, y1, y2, dx, dy, step;
+//algoritma DDA
+void DDA() {
+	int dx, dy, step;
 	float x,y,x_inc,y_inc;
 
-	x2 = 10;
-	y2 = 10;
-	x1 = 500;
-	y1 = 400;
 	x = (float)x1;
-	y = (float)y1;
+	y = (float)y_1;
 
 	dx = x2 - x1;
-	dy = y2 - y1;
+	dy = y2 - y_1;
 	if (abs(dx) > abs(dy)) {
 		step = abs(dx);
 	}
@@ -121,19 +134,16 @@ void DD() {
 	glFlush();
 }
 
-void Bresenham() {	//dummy, mau diganti
-	int x1, y1, x2, y2, dx, dy, x, y, p,d2,dydx2;
+//Algortima Bresenham
+void Bresenham() {
+	int dx, dy, x, y, p,d2,dydx2;
 	bool m1 = false;
 
-	x2 = 10;
-	y2 = 10;
-	x1 = 500;
-	y1 = 400;
 	x = x1;
-	y = y1;
+	y = y_1;
 
 	dx = abs(x2 - x1);
-	dy = abs(y2 - y1);
+	dy = abs(y2 - y_1);
 	if (dx<dy) {
 		m1 = true;
 		d2 = 2 * dx;
@@ -152,9 +162,10 @@ void Bresenham() {	//dummy, mau diganti
 	glVertex2i(x, y);
 
 	//perulangan untuk menggambar titik-titik 
+	//m1 jika m>=1
 	if (m1) {
 		while (x != x2 && y != y2) {
-			if (y1 > y2) {
+			if (y_1 > y2) {
 				y--;
 			}
 			else y++;
@@ -189,7 +200,7 @@ void Bresenham() {	//dummy, mau diganti
 			}
 			else
 			{
-				if (y1 > y2) {
+				if (y_1 > y2) {
 					y--;
 				}
 				else y++;
@@ -204,6 +215,43 @@ void Bresenham() {	//dummy, mau diganti
 	glFlush();
 }
 
-void Circle() {
+//fungsi menggambar refleksi titik di semua oktan
+void drawRelfection(int cx, int cy,int x, int y) {
 
+	glVertex2i(cx + x, cx + y);
+	glVertex2i(cx + x, cx - y);
+	glVertex2i(cx - x, cx + y);
+	glVertex2i(cx - x, cx - y);
+	glVertex2i(cx + y, cx + x);
+	glVertex2i(cx + y, cx - x);
+	glVertex2i(cx - y, cx + x);
+	glVertex2i(cx - y, cx - x);
+}
+
+//algoritma menggambar lingkaran
+void Circle() {
+	int p, x, y;
+
+	p = 1 - r;
+	x = 0;
+	y = r;
+
+	glBegin(GL_POINTS);
+	drawRelfection(x1,y_1,x,y);
+
+	while (x <= y) {
+		x++;
+		if (p < 0) {
+			p += 2 * x + 1;
+		}
+		else
+		{
+			y--;
+			p += 2*(x-y)+1;
+		}
+		drawRelfection(x1, y_1, x, y);
+	}
+
+	glEnd();
+	glFlush();
 }
